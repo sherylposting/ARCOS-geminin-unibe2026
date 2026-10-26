@@ -64,6 +64,8 @@ except Exception as e:
 if STACK_TRIM:
     np_nuc = np_nuc[STACK_TRIM_START : STACK_TRIM_END]
     np_erk = np_erk[STACK_TRIM_START : STACK_TRIM_END]
+    np_lab_filt = np_lab_filt[STACK_TRIM_START : STACK_TRIM_END]
+    np_lab_ring = np_lab_ring[STACK_TRIM_START : STACK_TRIM_END]
 
 # %%
 # Show a montage of 3 time points from the nuclear and ERK channels
@@ -94,12 +96,12 @@ if IMG_NB:
     axarr[0].set_axis_off()
     axarr[0].set_title("Nuclear channel: H2B\n"
         f"Frames: {', '.join(map(str, nuc_idx))}")
-    axarr[0].imshow(imMontNuc, cmap="gray", vmin=50, vmax=8000)
+    axarr[0].imshow(imMontNuc, cmap="gray")
 
     axarr[1].set_axis_off()
     axarr[1].set_title("ERK channel: ERK-KTR\n"
         f"Frames: {', '.join(map(str, nuc_idx))}")
-    axarr[1].imshow(imMontErk, cmap="gray", vmin=500, vmax=7000)
+    axarr[1].imshow(imMontErk, cmap="gray")
 
     if PLOT_SAVE:
         plt.savefig(f"{DIR_OUT_PLOT}/montage-raw.png", bbox_inches="tight", dpi=300)
@@ -151,7 +153,7 @@ plt.close()
 
 # %%
 # Overlay nuclear masks on EKR-KTR
-plt.imshow(np_nuc_show, cmap="Greys", interpolation="none", vmin=1000, vmax=5000)
+plt.imshow(np_nuc_show, cmap="Greys", interpolation="none")
 plt.imshow(np_lab_show, cmap="tab20", alpha=0.25, interpolation="none")
 plt.axis("off")
 plt.tight_layout()
@@ -181,7 +183,7 @@ plt.close()
 
 # %%
 # Overlay cytoplasmic rings on EKR-KTR
-plt.imshow(np_erk_show, cmap="Greys", interpolation="none", vmin=1500, vmax=7000)
+plt.imshow(np_erk_show, cmap="Greys", interpolation="none")
 plt.imshow(np_lab_ring_show, cmap="tab20", alpha=0.75, interpolation="none")
 plt.axis("off")
 plt.tight_layout()
@@ -425,20 +427,20 @@ plt.close("all")
 # %%
 # Noodle plot
 fig, ax = NoodlePlot(
-    df_ce_filt[df_ce_filt["cl_id"] == 5], COL_COLL_ID, COL_TRK_ID, COL_FRAME, COL_POS[0], COL_POS[1]
+    df_ce_filt, COL_COLL_ID, COL_TRK_ID, COL_FRAME, COL_POS[0], COL_POS[1]
 ).plot("y", color_cylce=TAB20)
 
 v_lab_x = np.arange(0, 360, step=60) * ACQ_FREQ / 60
 v_lab_x = v_lab_x.astype(int)
 
 ax.set_xticks(np.arange(0, 360, step=60))
-ax.set_xticklabels(v_lab_x, )
+ax.set_xticklabels(v_lab_x)
 
 v_lab_y = np.arange(0, 1024, step=100 / PXSZ) * PXSZ
 v_lab_y = v_lab_y.astype(int)
 
 ax.set_yticks(np.arange(0, 1024, step=100 / PXSZ))
-ax.set_yticklabels(v_lab_y, )
+ax.set_yticklabels(v_lab_y)
 
 ax.invert_yaxis()
 
@@ -505,7 +507,7 @@ m_xy_ce = df_ce_show[[COL_POS[0], COL_POS[1]]].values
 chull = ConvexHull(m_xy_ce)
 
 np_erk_show = np_erk[n_frame_show, fov_crop_y, fov_crop_x]
-plt.imshow(np_erk_show, cmap="Greys", interpolation="none", vmin=1500, vmax=7000)
+plt.imshow(np_erk_show, cmap="Greys", interpolation="none")
 
 for simplex in chull.simplices:
     plt.plot(

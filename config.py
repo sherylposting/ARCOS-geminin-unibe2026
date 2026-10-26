@@ -19,12 +19,12 @@ if PARCOMP:
     NJOBS = -1
 
 
-# Analyze only part of the stack (here, chosen frames 10-30)
+# Analyze only part of the stack (here, chosen frames 10-40)
 STACK_TRIM = True
 
 if STACK_TRIM:
     STACK_TRIM_START = 10
-    STACK_TRIM_END = 30
+    STACK_TRIM_END = 40
 
 # 20-colour tableau palette without greys: #7f7f7f and #c7c7c7
 TAB20 = [
@@ -92,7 +92,7 @@ DEGREE_OF_POLYNOMIAL: int = 1  # needed only if BINARIZATION_METHOD method = lm
 BINARIZATION_THRESHOLD: float = 0.4
 
 ## Collective event detection
-EPS_COLL: float = 100
+EPS_COLL: float = 2*70
 MIN_CLUSTER_SIZE: int = 3
 NPREV_FRAMES: int = 1
 
@@ -107,7 +107,7 @@ N_VALID_STEPS = 200
 PXSZ = 332.80 / 1024  # pixel size in um
 
 if STACK_TRIM:
-    n_frame_show = STACK_TRIM_START # selected frame number to show
+    n_frame_show = 12 # selected frame number to show
 else:
     n_frame_show = 47
 

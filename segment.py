@@ -95,7 +95,6 @@ for idx_frame in range(n_frames):
     np_frame = np.asarray(np_nuc[idx_frame])
     np_frame = normalize(np_frame, 1.0, 99.8, axis=axis_norm)
     #    labels, details = model.predict_instances(np_frame, prob_thresh=0.5, nms_thresh=0.3)
-    ## does it matter to adjust the parameters? why?
     labels, details = model.predict_instances(np_frame)
     np_lab[idx_frame] = labels
 
