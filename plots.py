@@ -62,16 +62,19 @@ except Exception as e:
 
 # Trim the stack
 if STACK_TRIM:
-    np_nuc = np_nuc[35:55]
-    np_erk = np_erk[35:55]
+    np_nuc = np_nuc[STACK_TRIM_START : STACK_TRIM_END]
+    np_erk = np_erk[STACK_TRIM_START : STACK_TRIM_END]
 
 # %%
 # Show a montage of 3 time points from the nuclear and ERK channels
 if IMG_NB:
     fig, axarr = plt.subplots(2, 1)
 
-    np_nuc_sel = np_nuc[np.linspace(0, len(np_nuc) - 1, 3).astype(np.int32)]
-    np_erk_sel = np_erk[np.linspace(0, len(np_erk) - 1, 3).astype(np.int32)]
+    nuc_idx = np.linspace(0, len(np_nuc) - 1, 3).astype(np.int32)
+    erk_idx = np.linspace(0, len(np_erk) - 1, 3).astype(np.int32)
+
+    np_nuc_sel = np_nuc[nuc_idx]
+    np_erk_sel = np_erk[erk_idx]
 
     imMontNuc = montage(
         np_nuc_sel,
@@ -87,12 +90,15 @@ if IMG_NB:
         grid_shape=(1, np_erk_sel.shape[0]),
     )
 
+    # print title and frame number
     axarr[0].set_axis_off()
-    axarr[0].set_title("Nuclear channel: H2B")
+    axarr[0].set_title("Nuclear channel: H2B\n"
+        f"Frames: {', '.join(map(str, nuc_idx))}")
     axarr[0].imshow(imMontNuc, cmap="gray", vmin=50, vmax=8000)
 
     axarr[1].set_axis_off()
-    axarr[1].set_title("ERK channel: ERK-KTR")
+    axarr[1].set_title("ERK channel: ERK-KTR\n"
+        f"Frames: {', '.join(map(str, nuc_idx))}")
     axarr[1].imshow(imMontErk, cmap="gray", vmin=500, vmax=7000)
 
     if PLOT_SAVE:
