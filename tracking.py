@@ -1,17 +1,16 @@
 # %%
 # modules to import
 import os
+import argparse
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
-from tifffile import imread, imwrite
+from tifffile import imread
 from skimage.segmentation import expand_labels
 from skimage.measure import regionprops_table
+from skimage.util import map_array
 import btrack
 from btrack.constants import BayesianUpdates
-from arcos4py import ARCOS
-from arcos4py.tools import filterCollev, calculate_statistics, estimate_eps
-import argparse
 from glob import glob
 
 # import constants from config.py
@@ -94,7 +93,6 @@ else:
 
 # Extract measurements from images based on nuclear and ring masks.
 # Extracted: intensity_mean, centroid, label
-PARCOMP = True
 if PARCOMP:
     # Calculate properties in parallel
     df_prop_nuc = pd.concat(
@@ -251,7 +249,7 @@ df_tracks[COL_RT] = df_tracks[COL_FRAME] * ACQ_FREQ / 60
 # final df with track id's
 df_tracks.head()
 
-if DATA_SAVE:
-    df_tracks.to_csv(f"{SAMPLE_OUT_DIR}/df_tracks.csv.gz", compression="gzip", index=False)
-    np.savez_compressed(f"{SAMPLE_OUT_DIR}/np_lab_ring.npz", arr=np_lab_ring)
-    print(f"Successfully saved tracks (with properties) as df_tracks.csv.gz, and labeled cyto rings as np_lab_ring.npz!")
+# %%
+df_tracks.to_csv(f"{SAMPLE_OUT_DIR}/df_tracks.csv.gz", compression="gzip", index=False)
+np.savez_compressed(f"{SAMPLE_OUT_DIR}/np_lab_ring.npz", arr=np_lab_ring)
+print(f"Successfully saved tracks (with properties) as df_tracks.csv.gz, and labeled cyto rings as np_lab_ring.npz!")

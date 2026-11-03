@@ -492,37 +492,51 @@ if PLOT_SAVE:
     p9.ggsave(
         p_ce_dur_sz, f"{DIR_OUT_PLOT}/fig6-ce-dur-sz.pdf", width=3.5, height=3, dpi=300
     )
+plt.close()
 
 # %%
 # Sample CE: convex hull on ERK-KTR image
-plt.close()
+# Plot the frame with the largest collective event
+t_offset = STACK_TRIM_START if STACK_TRIM else 0
+
+if STACK_TRIM:
+    ce_source = df_ce_filt[df_ce_filt["t"].between(STACK_TRIM_START, STACK_TRIM_END)]
+else:
+    ce_source = df_ce_filt
+
+ce_members = ce_source["t"].value_counts()
+max_ce_t = ce_members.index[0]
+max_ce_frame = max_ce_t - t_offset
 
 df_ce_show = df_ce[
-    (df_ce[COL_FRAME] == n_frame_show)
+    (df_ce[COL_FRAME] == max_ce_t)
     & (df_ce[COL_POS[0]].between(fov_crop_x.start, fov_crop_x.stop))
     & (df_ce[COL_POS[1]].between(fov_crop_y.start, fov_crop_y.stop))
 ]
 
 m_xy_ce = df_ce_show[[COL_POS[0], COL_POS[1]]].values
-chull = ConvexHull(m_xy_ce)
 
-np_erk_show = np_erk[n_frame_show, fov_crop_y, fov_crop_x]
+np_erk_show = np_erk[max_ce_frame, fov_crop_y, fov_crop_x]
 plt.imshow(np_erk_show, cmap="Greys", interpolation="none")
 
-for simplex in chull.simplices:
+if len(m_xy_ce) >= 3:
+    chull = ConvexHull(m_xy_ce)
+    for simplex in chull.simplices:
+        plt.plot(
+            m_xy_ce[simplex, 0] - fov_crop_x.start,
+            m_xy_ce[simplex, 1] - fov_crop_y.start,
+            "-",
+            color="#ff7f0e",
+            linewidth=4,
+        )
+
+if len(m_xy_ce) > 0:
     plt.plot(
-        m_xy_ce[simplex, 0] - fov_crop_x.start,
-        m_xy_ce[simplex, 1] - fov_crop_y.start,
-        "-",
-        color="#ff7f0e",
-        linewidth=4,
+        m_xy_ce[:, 0] - fov_crop_x.start,
+        m_xy_ce[:, 1] - fov_crop_y.start,
+        "o",
+        color="#d62728",
     )
-plt.plot(
-    m_xy_ce[:, 0] - fov_crop_x.start,
-    m_xy_ce[:, 1] - fov_crop_y.start,
-    "o",
-    color="#d62728",
-)
 
 plt.axis("off")
 plt.tight_layout()
@@ -530,5 +544,64 @@ plt.tight_layout()
 if PLOT_SAVE:
     plt.savefig(
         f"{DIR_OUT_PLOT}/fig2-ce-erk.png", bbox_inches="tight", pad_inches=0.0, dpi=300
+    )
+plt.close()
+
+# %%
+# Sample CE: print a 5-frame montage of the largest CE event
+frames_t = np.arange(max_ce_t - 2, max_ce_t + 3)
+frames_idx = frames_t - t_offset
+keep = (frames_idx >= 0) & (frames_idx < np_erk.shape[0])
+frames_t = frames_t[keep]
+frames_idx = frames_idx[keep]
+
+fig, axarr = plt.subplots(1, len(frames_t), figsize=(3.5 * len(frames_t), 3.8))
+axarr = np.atleast_1d(axarr)
+
+for ax, f, fi in zip(axarr, frames_t, frames_idx):
+    np_erk_show = np_erk[fi, fov_crop_y, fov_crop_x]
+    ax.imshow(np_erk_show, cmap="Greys", interpolation="none")
+
+    df_f = df_ce[
+        (df_ce[COL_FRAME] == f)
+        & (df_ce[COL_POS[0]].between(fov_crop_x.start, fov_crop_x.stop))
+        & (df_ce[COL_POS[1]].between(fov_crop_y.start, fov_crop_y.stop))
+    ]
+    m_xy = df_f[[COL_POS[0], COL_POS[1]]].values
+
+    if len(m_xy) >= 3:
+        try:
+            chull = ConvexHull(m_xy)
+            for simplex in chull.simplices:
+                ax.plot(
+                    m_xy[simplex, 0] - fov_crop_x.start,
+                    m_xy[simplex, 1] - fov_crop_y.start,
+                    "-",
+                    color="#ff7f0e",
+                    linewidth=2,
+                )
+        except Exception:
+            pass  # collinear points, no hull for this frame
+
+    if len(m_xy) > 0:
+        ax.plot(
+            m_xy[:, 0] - fov_crop_x.start,
+            m_xy[:, 1] - fov_crop_y.start,
+            "o",
+            color="#d62728",
+            markersize=3,
+        )
+
+    title = f"frame {f}"
+    if f == max_ce_t:
+        title += " (max CE)"
+    ax.set_title(title, fontsize=10)
+    ax.axis("off")
+
+plt.tight_layout()
+
+if PLOT_SAVE:
+    plt.savefig(
+        f"{DIR_OUT_PLOT}/fig2-ce-erk-montage.png", bbox_inches="tight", pad_inches=0.0, dpi=300
     )
 plt.close()

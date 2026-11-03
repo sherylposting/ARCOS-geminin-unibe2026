@@ -1,12 +1,12 @@
 # %%
 # modules to import
 import pandas as pd
+import numpy as np
+from matplotlib.colors import to_rgb
 
 # ARCOS
 from arcos4py import ARCOS
 from arcos4py.tools import filterCollev, calculate_statistics, estimate_eps
-from arcos4py.plotting import NoodlePlot, plotOriginalDetrended
-from arcos4py import validation
 import argparse
 
 # import constants from config.py
@@ -70,6 +70,7 @@ obj_arcos.data.head()
 
 # %%
 # detection of CEs
+# TODO: how to get and adjust the eps estimate before running arcos?
 p_nn = estimate_eps(
     obj_arcos.data,
     method="mean",

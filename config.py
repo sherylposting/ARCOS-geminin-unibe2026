@@ -4,10 +4,7 @@
 DIR_OUT_DATA = "output-data"
 DIR_OUT_PLOT = "output-plots"
 
-
-IMG_NAPARI = False  # Whether to show images in napari
-IMG_NB = True  # Whether to show images in the notebook
-DATA_SAVE = True  # Whether to save intermediate data
+DATA_SAVE = True  # Whether to save intermediate data. Required for the SLURM pipeline
 PLOT_SAVE = True # Whether to save plots
 PARCOMP = True  # Whether to perform computations in parallel
 
