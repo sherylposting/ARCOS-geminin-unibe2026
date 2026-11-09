@@ -1,0 +1,15 @@
+# data / results
+*.csv
+*.csv.gz
+*.npz
+*.png
+*.pdf
+*.svg
+
+# temp
+*.pyc
+
+# logs
+scripts/logs/
+*.err
+*.out

@@ -36,10 +36,10 @@ echo "Task $SLURM_ARRAY_TASK_ID: well=$WELL site=$SITE"
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate arcos_tutorial
 
-#echo "=== segment === started at: $(date)";  python segment.py  $ARGS
-#echo "=== tracking === started at: $(date)";    python tracking.py    $ARGS
-#echo "=== ce-arcos === started at: $(date)"; python ce-arcos.py $ARGS
-echo "=== napari-save === started at: $(date)";    python napari-save.py    $ARGS
-#echo "=== plots === started at: $(date)";    python plots.py    $ARGS
+echo "=== segment === started at: $(date)";  python src/segment.py  $ARGS
+echo "=== tracking === started at: $(date)";    python src/tracking.py    $ARGS
+echo "=== ce-arcos === started at: $(date)"; python src/ce-arcos.py $ARGS
+echo "=== napari-save === started at: $(date)";    python src/napari-save.py    $ARGS
+echo "=== plots === started at: $(date)";    python src/plots.py    $ARGS
 
 echo "arcos-pipeline finished at: $(date) for well=$WELL site=$SITE"
