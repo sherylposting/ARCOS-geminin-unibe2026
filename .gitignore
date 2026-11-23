@@ -5,6 +5,10 @@
 *.png
 *.pdf
 *.svg
+*.tiff
+output-data
+output-plots
+data
 
 # temp
 *.pyc
